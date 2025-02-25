@@ -1,9 +1,13 @@
 import pygame
 
+from cardmaker import Card
+
+card = Card("https://en.wikipedia.org/wiki/" + input("Card link: "))
+
 pygame.init()
 
 pygame.font.init()
-my_font = pygame.font.SysFont('Comic Sans MS', 30)
+my_font = pygame.font.SysFont('Comic Sans MS', 15)
 
 WIDTH, HEIGHT = 800, 600
 
@@ -42,7 +46,6 @@ def line(sx: float, sy: float, ex: float, ey: float, col: tuple[int, int, int] =
 def circ(x: float, y: float, r: float, col: tuple[int, int, int] = (255, 255, 255)) :
 	pygame.draw.circle(screen, col, (x, y), r)
 
-
 while running :
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -52,6 +55,8 @@ while running :
 	mx, my = pygame.mouse.get_pos()
 
 	screen.fill("black")
+
+	write(card.name)
 
 	pygame.display.flip()
 
