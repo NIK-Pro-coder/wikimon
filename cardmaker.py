@@ -15,7 +15,7 @@ class Card :
 		if not wiki_url.startswith("https://en.wikipedia.org/wiki/") :
 			raise ValueError(f"Url '{wiki_url}' is not a wikipedia url!")
 
-		page = requests.get(wiki_url)
+		page = requests.get(wiki_url.lower())
 
 		if not page.ok :
 			raise ConnectionError(f"GET request failed with code {page.status_code}")
@@ -30,6 +30,9 @@ class Card :
 			soup.find("div", attrs={
 				"id": "mw-normal-catlinks"
 			}).find("ul").find_all("li")
+		]
+		categories = [
+			x for x in categories if len(x) <= 25
 		]
 
 		tags = re.findall("<.*>", page.text)
@@ -75,7 +78,7 @@ class Card :
 		# Attacks
 		base_atk = len(page.text) / ATTACK_COEFFICENT
 
-		self.moves = []
+		self.moves: list[tuple[str, int]] = []
 		if len(sections) >= 4 :
 			for i in range(4) :
 				self.moves.append(
@@ -97,6 +100,10 @@ class Card :
 
 		# Defence
 		self.defence: int = counter["a"] if "a" in counter else 0
+
+		# Image
+		self.image_link = "https:" + re.search("src=\".*\"", str(soup.find_all("img")[4])).group()[5:]
+		self.image_link = self.image_link[:self.image_link.find(" ")-1]
 
 	def __str__(self) -> str:
 		return f"""- {self.name} -
